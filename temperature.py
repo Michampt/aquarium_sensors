@@ -8,7 +8,7 @@ class TemperatureSensor():
         temp_sensor_device_dir = glob.glob(temp_sensor_base_dir + '28*')[0]
         temp_sensor_device_file = temp_sensor_device_dir + '/w1_slave'
         self._temperature_device = temp_sensor_device_file
-        self._debug = False
+        self._debug = debug
         self._temperature_counter = Gauge('saltwater_temperature', 'Temperature Gauge')
         
     @property

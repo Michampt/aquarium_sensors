@@ -3,7 +3,6 @@
 import threading
 import time
 import argparse
-from typing_extensions import Required
 from prometheus_client import start_http_server
 from power import PowerDevice
 from temperature import TemperatureSensor
