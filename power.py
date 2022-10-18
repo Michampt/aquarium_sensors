@@ -1,4 +1,3 @@
-from ssl import Options
 import threading
 import time
 from prometheus_client import Gauge, Counter
