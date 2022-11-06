@@ -44,8 +44,10 @@ I have the PDU communicating over telnet, using pexpect. If you ONLY want to uti
 
 ## Getting Started
 
+Set up an SNMP user with snmpv3 enabled. I used a passwordless user (not recommended)
+
 If everything's connected up and you have a telnet username/pw for the PDU:  
-``` python main.py --pdu_ip_addr <ip_address> -d <pdu_device_name> -u <telnet_user> -p <telnet_password> ```
+``` python main.py --pdu_ip_addr <ip_address> -u <snmp_user>```
 
 
 ## Prometheus
