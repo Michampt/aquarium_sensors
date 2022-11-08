@@ -3,23 +3,24 @@
 import threading
 import time
 import argparse
+import logging
 from prometheus_client import start_http_server
 from power import PowerDevice
 from temperature import TemperatureSensor
 
-
 debug = False
+logger = None
 ARGS = None
 
-cold_threshold = 77.5
-hot_threshold = 78.5
+cold_threshold = 77.8
+hot_threshold = 78.2
 ideal_temp = 78.0
 
 
 def init_prometheus_server():
-    print("Starting prometheus metrics server")
+    logger.info("Starting prometheus metrics server")
     start_http_server(8080)
-    print("Prometheus metrics available on port 8080 /metrics")
+    logger.info("Prometheus metrics available on port 8080 /metrics")
     
     
 def temperature_reader_thread(ts: TemperatureSensor):
@@ -49,17 +50,30 @@ if __name__ == "__main__":
     ARGS = parser.parse_args()
     try:
         debug = ARGS.debug
-        print(f"Debug: {debug}")
-        ts = TemperatureSensor(debug)
-        pd = PowerDevice(debug, ARGS.pdu_ip_addr, ARGS.username)
+        if debug:
+            log_level = logging.DEBUG
+        else:
+            log_level = logging.INFO
+
+        logging.basicConfig(level=log_level, format='%(module)s %(levelname)s %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+        logger = logging.getLogger('swsensors')
         
-        print("Starting saltwater sensor server")
+        ts = TemperatureSensor()
+        pd = PowerDevice(ARGS.pdu_ip_addr, ARGS.username)
+        
+        logger.info("Starting Saltwater Sensor Server")
         pd.init_power()
+    
+        logger.info(f"Temperature Thresholds")
         
-        print("Retrieving initital temperature")
+        logger.info(f"High: {hot_threshold}")
+        logger.info(f"Low: {cold_threshold}")
+        logger.info(f"Ideal: {ideal_temp}")
+        
+        logger.info("Retrieving Current Temperature")
         ts.read_temperature()
-        
-        print(f"Current temperature: {ts.current_temperature}")
+    
+        logger.info(f"Current Temperature: {ts.current_temperature}")
         
         init_prometheus_server()
         
@@ -71,4 +85,4 @@ if __name__ == "__main__":
         tm_thread = threading.Thread(target=temperature_management_thread, args=[pd, ts])
         tm_thread.start()
     except Exception as err:
-        print(err)
+        logging.error(err)

@@ -1,14 +1,16 @@
 import glob
+import logging
 from prometheus_client import Gauge
 
+logging.getLogger('swsensors')
+
 class TemperatureSensor():
-    def __init__(self, debug: bool = False) -> None:
+    def __init__(self) -> None:
         self._current_temperature = 0.0
         temp_sensor_base_dir = '/sys/bus/w1/devices/'
         temp_sensor_device_dir = glob.glob(temp_sensor_base_dir + '28*')[0]
         temp_sensor_device_file = temp_sensor_device_dir + '/w1_slave'
         self._temperature_device = temp_sensor_device_file
-        self._debug = debug
         self._temperature_counter = Gauge('saltwater_temperature', 'Temperature Gauge')
         
     @property
@@ -44,11 +46,8 @@ class TemperatureSensor():
         if temp == None:
             raise Exception("Could not read temperature")
         
-        if self._debug:
-            print(f"Current Temp: {self.current_temperature}")
+        logging.debug(f"Current Temp: {self.current_temperature}")
         
         self.current_temperature = temp
         self._temperature_counter.set(self.current_temperature)
         
-        
-                
