@@ -12,8 +12,8 @@ debug = False
 logger = None
 ARGS = None
 
-cold_threshold = 77.8
-hot_threshold = 78.2
+cold_threshold = 77.5
+hot_threshold = 78.5
 ideal_temp = 78.0
 
 
